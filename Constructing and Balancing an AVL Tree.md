@@ -29,59 +29,22 @@ To write a Python program to construct an **AVL tree**, balance it, and print th
 ```
 # Reg.No: 212223060057
 # Name: DINESH KUMAR A
-# Ex.No: 16B - Constructing and Balancing an AVL Tree in Python
+from TreeAVL.AVL import AVL
 
-from binarytree import build, Node, bst
-
-def getDictTree(tree):
-    return tree.to_dict()
+def getDictTree(self):
+ return self.dict_tree
 
 def Construct_AVL(L):
-    print("Original List:", L)
-    
-    # Build tree from list
-    tree = build(L)
-    print("\nTree before balancing:")
-    print(tree)
-    
-    # Sort list to simulate balanced AVL insertion
-    L_sorted = sorted(L)
-    balanced_tree = bst(L_sorted)
-    
-    print("\nTree after balancing (AVL simulation):")
-    print(balanced_tree)
-
-# Main program
-L = [10, 20, 30, 40, 50, 25]
-Construct_AVL(L)
+  tree = AVL(L)
+  print("AVL Tree Before Balancing\n",getDictTree(tree))
+  tree.BalanceTree()
+  print("AVL Tree After Balancing\n",getDictTree(tree))
 
 ```
 
 ## OUTPUT
-```
-Original List: [10, 20, 30, 40, 50, 25]
+<img width="1138" height="316" alt="image" src="https://github.com/user-attachments/assets/ebb15481-5686-4b5e-a1db-26a35c302fab" />
 
-Tree before balancing:
-  10
-    \
-     20
-       \
-        30
-          \
-           40
-             \
-              50
-               \
-                25
-
-Tree after balancing (AVL simulation):
-      30
-    /    \
-  20      40
- /       /  \
-10      25   50
-
-```
 
 ## RESULT
 Thus, the Python program to construct and balance an AVL tree was successfully executed and verified.
