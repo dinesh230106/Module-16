@@ -42,106 +42,106 @@ To write a Python function `def leftRotate(self, z):` to perform the left rotati
 ```
 # Reg.No: 212223060057
 # Name: DINESH KUMAR A
-# Ex.No: 16E - Left Rotation in AVL Tree and Insert '7'
+class TreeNode(object):
+	def __init__(self, val):
+		self.val = val
+		self.left = None
+		self.right = None
+		self.height = 1
 
-class TreeNode:
-    def __init__(self, key):
-        self.key = key
-        self.left = None
-        self.right = None
-        self.height = 1
+class AVL_Tree(object):
+	def insert(self, root, key):
+		if not root:
+			return TreeNode(key)
+		elif key < root.val:
+			root.left = self.insert(root.left, key)
+		else:
+			root.right = self.insert(root.right, key)
 
-class AVL_Tree:
-    def insert(self, root, key):
-        # Standard BST insertion
-        if not root:
-            return TreeNode(key)
-        elif key < root.key:
-            root.left = self.insert(root.left, key)
-        else:
-            root.right = self.insert(root.right, key)
-        
-        # Update height
-        root.height = 1 + max(self.getHeight(root.left), self.getHeight(root.right))
-        
-        # Get balance factor
-        balance = self.getBalance(root)
-        
-        # Left Left Case
-        if balance > 1 and key < root.left.key:
-            return self.rightRotate(root)
-        # Right Right Case
-        if balance < -1 and key > root.right.key:
-            return self.leftRotate(root)
-        # Left Right Case
-        if balance > 1 and key > root.left.key:
-            root.left = self.leftRotate(root.left)
-            return self.rightRotate(root)
-        # Right Left Case
-        if balance < -1 and key < root.right.key:
-            root.right = self.rightRotate(root.right)
-            return self.leftRotate(root)
-        
-        return root
+	
+		root.height = 1 + max(self.getHeight(root.left),
+						self.getHeight(root.right))
 
-    def leftRotate(self, z):
-        y = z.right
-        T2 = y.left
-        y.left = z
-        z.right = T2
-        z.height = 1 + max(self.getHeight(z.left), self.getHeight(z.right))
-        y.height = 1 + max(self.getHeight(y.left), self.getHeight(y.right))
-        return y
+		balance = self.getBalance(root)
 
-    def rightRotate(self, z):
-        y = z.left
-        T3 = y.right
-        y.right = z
-        z.left = T3
-        z.height = 1 + max(self.getHeight(z.left), self.getHeight(z.right))
-        y.height = 1 + max(self.getHeight(y.left), self.getHeight(y.right))
-        return y
+		if balance > 1 and key < root.left.val:
+			return self.rightRotate(root)
 
-    def getHeight(self, node):
-        if not node:
-            return 0
-        return node.height
+	
+		if balance < -1 and key > root.right.val:
+			return self.leftRotate(root)
 
-    def getBalance(self, node):
-        if not node:
-            return 0
-        return self.getHeight(node.left) - self.getHeight(node.right)
+		
+		if balance > 1 and key > root.left.val:
+			root.left = self.leftRotate(root.left)
+			return self.rightRotate(root)
+   
+		if balance < -1 and key < root.right.val:
+			root.right = self.rightRotate(root.right)
+			return self.leftRotate(root)
 
-    def preOrder(self, root):
-        if not root:
-            return
-        print(root.key, end=" ")
-        self.preOrder(root.left)
-        self.preOrder(root.right)
+		return root
 
-# Main Program
-avl = AVL_Tree()
+	def leftRotate(self, z):
+	    y=z.right
+	    T2=y.left
+	    
+	    y.left=T2
+	    z.right=y
+	    
+	    z.height=1+max(self.getheight(z.left)+self.getheight(z.right))
+	    y.height=1+max(self.geheight(y.left)+self.getheight(y.right))
+	    return y
+
+	
+	def getHeight(self, root):
+		if not root:
+			return 0
+
+		return root.height
+
+	def getBalance(self, root):
+		if not root:
+			return 0
+
+		return self.getHeight(root.left) - self.getHeight(root.right)
+
+	def preOrder(self, root):
+
+		if not root:
+			return
+
+		print("{0} ".format(root.val), end="")
+		self.preOrder(root.left)
+		self.preOrder(root.right)
+
+
+myTree = AVL_Tree()
 root = None
+n=int(input())
 
-# Insert initial elements
-elements = [10, 20, 30, 40, 50, 25]
-for elem in elements:
-    root = avl.insert(root, elem)
+ # WRITE YOUR CODE HERE 
+ 
+root = myTree.insert(root, 13)
+root = myTree.insert(root, 10)
+root = myTree.insert(root, 15)
+root = myTree.insert(root, 5)
+root = myTree.insert(root, 11)
+root = myTree.insert(root, 16)
+root = myTree.insert(root,n)
 
-# Insert '7' and perform rotations if necessary
-root = avl.insert(root, 7)
+ # WRITE YOUR CODE HERE 
 
-print("Preorder traversal of AVL tree after inserting 7:")
-avl.preOrder(root)
+
+print("Preorder traversal of the constructed AVL tree is")
+myTree.preOrder(root)
+print()
 
 ```
 
 ## OUTPUT
-```
-Preorder traversal of AVL tree after inserting 7:
-30 20 10 7 25 40 50
+<img width="1110" height="237" alt="image" src="https://github.com/user-attachments/assets/273cea23-e000-4698-8b56-2e694c452d25" />
 
-```
 
 ## RESULT
 The Python program successfully performed left rotation in the AVL tree and inserted the element '7', maintaining the AVL balance property
