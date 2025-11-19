@@ -36,85 +36,94 @@ To write a Python function `def insert(self, k):` to insert the nodes in a **B-T
 ```
 # Reg.No: 212223060057
 # Name: DINESH KUMAR A
-# Ex.No: 16C - Inserting Nodes in a B-Tree in Python
 
+# Create a node
 class BTreeNode:
-    def __init__(self, t, leaf=False):
-        self.t = t  # minimum degree
-        self.leaf = leaf
-        self.keys = []
-        self.children = []
+  def __init__(self, leaf=False):
+    self.leaf = leaf
+    self.keys = []
+    self.child = []
+
 
 class BTree:
-    def __init__(self, t):
-        self.root = BTreeNode(t, True)
-        self.t = t
+  def __init__(self, t):
+    self.root = BTreeNode(True)
+    self.t = t
+  def insert(self, k):
+    root = self.root
+    if len(root.keys) == (2 * self.t) - 1:
+      temp = BTreeNode()
+      self.root = temp
+      temp.child.insert(0, root)
+      self.split_child(temp, 0)
+      self.insert_non_full(temp, k)
+    else:
+      self.insert_non_full(root, k)
+  
 
-    def insert(self, k):
-        root = self.root
-        if len(root.keys) == 2*self.t - 1:
-            new_root = BTreeNode(self.t)
-            new_root.children.append(self.root)
-            self.split_child(new_root, 0)
-            self.root = new_root
-        self.insert_non_full(self.root, k)
+    
 
-    def insert_non_full(self, node, k):
-        i = len(node.keys) - 1
-        if node.leaf:
-            node.keys.append(0)
-            while i >= 0 and k < node.keys[i]:
-                node.keys[i+1] = node.keys[i]
-                i -= 1
-            node.keys[i+1] = k
-        else:
-            while i >= 0 and k < node.keys[i]:
-                i -= 1
-            i += 1
-            if len(node.children[i].keys) == 2*self.t - 1:
-                self.split_child(node, i)
-                if k > node.keys[i]:
-                    i += 1
-            self.insert_non_full(node.children[i], k)
 
-    def split_child(self, parent, i):
-        t = self.t
-        node = parent.children[i]
-        new_node = BTreeNode(t, node.leaf)
-        parent.keys.insert(i, node.keys[t-1])
-        parent.children.insert(i+1, new_node)
-        new_node.keys = node.keys[t: ]
-        node.keys = node.keys[:t-1]
-        if not node.leaf:
-            new_node.children = node.children[t:]
-            node.children = node.children[:t]
+  def insert_non_full(self, x, k):
+    i = len(x.keys) - 1
+    if x.leaf:
+      x.keys.append((None, None))
+      while i >= 0 and k[0] < x.keys[i][0]:
+        x.keys[i + 1] = x.keys[i]
+        i -= 1
+      x.keys[i + 1] = k
+    else:
+      while i >= 0 and k[0] < x.keys[i][0]:
+        i -= 1
+      i += 1
+      if len(x.child[i].keys) == (2 * self.t) - 1:
+        self.split_child(x, i)
+        if k[0] > x.keys[i][0]:
+          i += 1
+      self.insert_non_full(x.child[i], k)
 
-    def print_tree(self, node=None, level=0):
-        node = node or self.root
-        print("Level", level, ":", node.keys)
-        for child in node.children:
-            self.print_tree(child, level + 1)
+  def split_child(self, x, i):
+    t = self.t
+    y = x.child[i]
+    z = BTreeNode(y.leaf)
+    x.child.insert(i + 1, z)
+    x.keys.insert(i, y.keys[t - 1])
+    z.keys = y.keys[t: (2 * t) - 1]
+    y.keys = y.keys[0: t - 1]
+    if not y.leaf:
+      z.child = y.child[t: 2 * t]
+      y.child = y.child[0: t - 1]
 
-# Main program
-bt = BTree(2)  # Minimum degree t=2
-elements = [10, 20, 5, 6, 12, 30, 7]
+  # Print the tree
+  def print_tree(self, x, l=0):
+    print("Level ", l, " ", len(x.keys), end=":")
+    for i in x.keys:
+      print(i, end=" ")
+    print()
+    l += 1
+    if len(x.child) > 0:
+      for i in x.child:
+        self.print_tree(i, l)
 
-for elem in elements:
-    bt.insert(elem)
+  
 
-print("\nB-Tree structure after insertions:")
-bt.print_tree()
+B = BTree(3)
 
+for i in range(10):
+    B.insert((i, 2 * i))
+print("B Tree :")
+B.print_tree(B.root)
+n=int(input())
+B.insert((n,))
+# Write your code here
+
+print("\nB Tree after insertion")
+B.print_tree(B.root)
 ```
 
 ## OUTPUT
-```
-Level 0 : [10, 20]
-Level 1 : [5, 6, 7]
-Level 1 : [12]
-Level 1 : [30]
+<img width="1107" height="399" alt="image" src="https://github.com/user-attachments/assets/11858c8f-4694-4776-bf50-e8b466b96cb1" />
 
-```
 
 ## RESULT
 Thus, the Python program to insert nodes in a B-Tree and display its structure has been successfully executed.
