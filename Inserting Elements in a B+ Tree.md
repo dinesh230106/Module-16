@@ -37,88 +37,171 @@ To write a Python function `def insert(self, key, value):` to insert elements in
 ```
 # Reg.No: 212223060057
 # Name: DINESH KUMAR A
-# Ex.No: 16D - Inserting Elements in a B+ Tree in Python
-
-class BPlusTreeNode:
-    def __init__(self, leaf=False):
-        self.leaf = leaf
+class Node(object):
+    
+    def __init__(self, order):
+        
+        self.order = order
         self.keys = []
         self.values = []
-        self.children = []
+        self.leaf = True
 
-class BPlusTree:
-    def __init__(self, t=3):  # t is the order (max keys per node)
-        self.root = BPlusTreeNode(True)
-        self.t = t
+    def add(self, key, value):
+        
+        if not self.keys:
+            self.keys.append(key)
+            self.values.append([value])
+            return None
+
+        for i, item in enumerate(self.keys):
+            
+            if key == item:
+                self.values[i].append(value)
+                break
+
+            
+            elif key < item:
+                self.keys = self.keys[:i] + [key] + self.keys[i:]
+                self.values = self.values[:i] + [[value]] + self.values[i:]
+                break
+
+        
+            elif i + 1 == len(self.keys):
+                self.keys.append(key)
+                self.values.append([value])
+
+    def split(self):
+        
+        left = Node(self.order)
+        right = Node(self.order)
+        mid = self.order // 2
+
+        left.keys = self.keys[:mid]
+        left.values = self.values[:mid]
+
+        right.keys = self.keys[mid:]
+        right.values = self.values[mid:]
+
+      
+        self.keys = [right.keys[0]]
+        self.values = [left, right]
+        self.leaf = False
+
+    def is_full(self):
+     
+        return len(self.keys) == self.order
+
+    def show(self, counter=0):
+        
+        print(counter, str(self.keys))
+
+        
+        if not self.leaf:
+            for item in self.values:
+                item.show(counter + 1)
+
+class BPlusTree(object):
+    
+    def __init__(self, order=8):
+        self.root = Node(order)
+
+    def _find(self, node, key):
+        
+        for i, item in enumerate(node.keys):
+            if key < item:
+                return node.values[i], i
+
+        return node.values[i + 1], i + 1
+
+    def _merge(self, parent, child, index):
+        
+        parent.values.pop(index)
+        pivot = child.keys[0]
+
+        for i, item in enumerate(parent.keys):
+            if pivot < item:
+                parent.keys = parent.keys[:i] + [pivot] + parent.keys[i:]
+                parent.values = parent.values[:i] + child.values + parent.values[i:]
+                break
+
+            elif i + 1 == len(parent.keys):
+                parent.keys += [pivot]
+                parent.values += child.values
+                break
 
     def insert(self, key, value):
-        root = self.root
-        if len(root.keys) == self.t - 1:
-            new_root = BPlusTreeNode()
-            new_root.children.append(self.root)
-            self._split_child(new_root, 0)
-            self.root = new_root
-        self._insert_non_full(self.root, key, value)
+        
+        parent = None
+        child = self.root
 
-    def _insert_non_full(self, node, key, value):
-        if node.leaf:
-            i = 0
-            while i < len(node.keys) and key > node.keys[i]:
-                i += 1
-            node.keys.insert(i, key)
-            node.values.insert(i, value)
-        else:
-            i = 0
-            while i < len(node.keys) and key > node.keys[i]:
-                i += 1
-            if len(node.children[i].keys) == self.t - 1:
-                self._split_child(node, i)
-                if key > node.keys[i]:
-                    i += 1
-            self._insert_non_full(node.children[i], key, value)
+        while not child.leaf:
+            parent = child
+            child, index = self._find(child, key)
 
-    def _split_child(self, parent, index):
-        t = self.t
-        node = parent.children[index]
-        new_node = BPlusTreeNode(node.leaf)
-        mid = t // 2
-        parent.keys.insert(index, node.keys[mid])
-        parent.children.insert(index + 1, new_node)
-        new_node.keys = node.keys[mid + 1:]
-        node.keys = node.keys[:mid]
-        if node.leaf:
-            new_node.values = node.values[mid + 1:]
-            node.values = node.values[:mid + 1]
-        else:
-            new_node.children = node.children[mid + 1:]
-            node.children = node.children[:mid + 1]
+        child.add(key, value)
 
-    def print_tree(self, node=None, level=0):
-        node = node or self.root
-        print("Level", level, ":", node.keys)
-        for child in node.children:
-            self.print_tree(child, level + 1)
+        
+        if child.is_full():
+            child.split()
 
-# Main program
-bpt = BPlusTree(t=3)
-elements = [(10, 'A'), (20, 'B'), (5, 'C'), (6, 'D'), (12, 'E'), (30, 'F'), (7, 'G')]
+           
+            if parent and not parent.is_full():
+                self._merge(parent, child, index)
 
-for k, v in elements:
-    bpt.insert(k, v)
+    def retrieve(self, key):
+       
+        child = self.root
 
-print("\nB+ Tree structure after insertions:")
-bpt.print_tree()
+        while not child.leaf:
+            child, index = self._find(child, key)
 
+        for i, item in enumerate(child.keys):
+            if key == item:
+                return child.values[i]
+
+        return None
+
+    def show(self):
+        
+        self.root.show()
+
+def demo_node():
+    node = Node(order=4)
+    node.add('a', 'alpha')
+    node.add('b', 'bravo')
+    node.add('c', 'charlie')
+    node.add('d', 'delta')
+    node.show()
+
+    print('\nSplitting node...')
+    node.split()
+    node.show()
+
+def demo_bplustree():
+    print('B+ tree...')
+    
+    bplustree = BPlusTree(order=4)
+    x=input()
+    y=input()
+    bplustree.insert('a', 'alpha')
+    bplustree.insert('b', 'bravo')
+    bplustree.insert('c', 'charlie')
+    bplustree.insert('d', 'delta')
+    bplustree.insert('e', 'echo')
+    bplustree.insert(x,y)
+    bplustree.show()
+
+    
+
+if __name__ == '__main__':
+    demo_node()
+    print('\n')
+    demo_bplustree()
 ```
 
 ## OUTPUT
-```
-Level 0 : [10, 20]
-Level 1 : [5, 6, 7]
-Level 1 : [12]
-Level 1 : [30]
+<img width="1048" height="464" alt="image" src="https://github.com/user-attachments/assets/66fd899f-2ce8-4f81-b450-da8a829165ed" />
 
-```
 
 ## RESULT
 Thus, the Python program to insert elements into a B+ Tree and print its structure was successfully executed and verified.
